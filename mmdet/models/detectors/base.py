@@ -244,6 +244,10 @@ class BaseDetector(nn.Module, metaclass=ABCMeta):
                 DDP, it means the batch size on each GPU), which is used for \
                 averaging the logs.
         """
+        # TODO: the whole forward step
+        # for k, v in data.items():
+        #     if isinstance(v, torch.Tensor):
+        #         data[k] = v.checkpoint()
         losses = self(**data)
         loss, log_vars = self._parse_losses(losses)
 

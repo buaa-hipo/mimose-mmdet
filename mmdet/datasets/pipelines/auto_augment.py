@@ -101,6 +101,7 @@ class AutoAugment(object):
         self.transforms = [Compose(policy) for policy in self.policies]
 
     def __call__(self, results):
+        # import pdb; pdb.set_trace()
         transform = np.random.choice(self.transforms)
         return transform(results)
 

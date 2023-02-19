@@ -5,3 +5,11 @@ _base_ = [
 ]
 # optimizer
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
+optimizer_config = dict(
+    type="DistOptimizerHook",
+    update_interval=1,
+    grad_clip=None,
+    coalesce=True,
+    bucket_size_mb=-1,
+    use_fp16=False,
+)

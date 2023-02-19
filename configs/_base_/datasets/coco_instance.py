@@ -28,6 +28,8 @@ test_pipeline = [
         ])
 ]
 data = dict(
+    # samples_per_gpu=2,
+    # 2,4,8
     samples_per_gpu=2,
     workers_per_gpu=2,
     train=dict(

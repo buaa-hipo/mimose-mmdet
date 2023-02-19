@@ -1,0 +1,425 @@
+/opt/conda/envs/mimose/lib/python3.9/site-packages/mmcv/__init__.py:20: UserWarning: On January 1, 2023, MMCV will release v2.0.0, in which it will remove components related to the training process and add a data transformation module. In addition, it will rename the package names mmcv to mmcv-lite and mmcv-full to mmcv. See https://github.com/open-mmlab/mmcv/blob/master/docs/en/compatibility.md for more details.
+  warnings.warn(
+2023-02-19 10:51:33,458 - mmdet - INFO - Environment info:
+------------------------------------------------------------
+sys.platform: linux
+Python: 3.9.16 (main, Jan 11 2023, 16:05:54) [GCC 11.2.0]
+CUDA available: True
+GPU 0,1: Tesla V100-PCIE-32GB
+CUDA_HOME: /usr/local/cuda
+NVCC: Cuda compilation tools, release 11.3, V11.3.109
+GCC: gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+PyTorch: 1.11.0+cu113
+PyTorch compiling details: PyTorch built with:
+  - GCC 7.3
+  - C++ Version: 201402
+  - Intel(R) Math Kernel Library Version 2020.0.0 Product Build 20191122 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.5.2 (Git Hash a9302535553c73243c632ad3c4c80beec3d19a1e)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.3
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86
+  - CuDNN 8.2
+  - Magma 2.5.2
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.3, CUDNN_VERSION=8.2.0, CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/c++, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -fopenmp -DNDEBUG -DUSE_KINETO -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -DEDGE_PROFILER_USE_KINETO -O2 -fPIC -Wno-narrowing -Wall -Wextra -Werror=return-type -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-unused-local-typedefs -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=1.11.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=OFF, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, 
+
+TorchVision: 0.12.0+cu113
+OpenCV: 4.7.0
+MMCV: 1.7.1
+MMCV Compiler: GCC 7.5
+MMCV CUDA Compiler: 11.3
+MMDetection: 2.11.0+e10e3d6
+------------------------------------------------------------
+
+2023-02-19 10:51:36,127 - mmdet - INFO - Distributed training: False
+2023-02-19 10:51:38,836 - mmdet - INFO - Config:
+model = dict(
+    type='RetinaNet',
+    pretrained='torchvision://resnet101',
+    backbone=dict(
+        type='ResNet',
+        depth=101,
+        num_stages=4,
+        out_indices=(0, 1, 2, 3),
+        frozen_stages=1,
+        norm_cfg=dict(type='BN', requires_grad=True),
+        norm_eval=True,
+        style='pytorch'),
+    neck=dict(
+        type='FPN',
+        in_channels=[256, 512, 1024, 2048],
+        out_channels=256,
+        start_level=1,
+        add_extra_convs='on_input',
+        num_outs=5),
+    bbox_head=dict(
+        type='RetinaHead',
+        num_classes=80,
+        in_channels=256,
+        stacked_convs=4,
+        feat_channels=256,
+        anchor_generator=dict(
+            type='AnchorGenerator',
+            octave_base_scale=4,
+            scales_per_octave=3,
+            ratios=[0.5, 1.0, 2.0],
+            strides=[8, 16, 32, 64, 128]),
+        bbox_coder=dict(
+            type='DeltaXYWHBBoxCoder',
+            target_means=[0.0, 0.0, 0.0, 0.0],
+            target_stds=[1.0, 1.0, 1.0, 1.0]),
+        loss_cls=dict(
+            type='FocalLoss',
+            use_sigmoid=True,
+            gamma=2.0,
+            alpha=0.25,
+            loss_weight=1.0),
+        loss_bbox=dict(type='L1Loss', loss_weight=1.0)),
+    train_cfg=dict(
+        assigner=dict(
+            type='MaxIoUAssigner',
+            pos_iou_thr=0.5,
+            neg_iou_thr=0.4,
+            min_pos_iou=0,
+            ignore_iof_thr=-1),
+        allowed_border=-1,
+        pos_weight=-1,
+        debug=False),
+    test_cfg=dict(
+        nms_pre=1000,
+        min_bbox_size=0,
+        score_thr=0.05,
+        nms=dict(type='nms', iou_threshold=0.5),
+        max_per_img=100))
+dataset_type = 'CocoDataset'
+data_root = 'data/coco/'
+img_norm_cfg = dict(
+    mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
+    dict(type='RandomFlip', flip_ratio=0.5),
+    dict(
+        type='AutoAugment',
+        policies=[[{
+            'type':
+            'Resize',
+            'img_scale': [(480, 1333), (512, 1333), (544, 1333), (576, 1333),
+                          (608, 1333), (640, 1333), (672, 1333), (704, 1333),
+                          (736, 1333), (768, 1333), (800, 1333)],
+            'multiscale_mode':
+            'value',
+            'keep_ratio':
+            True
+        }],
+                  [{
+                      'type': 'Resize',
+                      'img_scale': [(400, 1333), (500, 1333), (600, 1333)],
+                      'multiscale_mode': 'value',
+                      'keep_ratio': True
+                  }, {
+                      'type': 'RandomCrop',
+                      'crop_type': 'absolute_range',
+                      'crop_size': (384, 600),
+                      'allow_negative_crop': True
+                  }, {
+                      'type':
+                      'Resize',
+                      'img_scale': [(480, 1333), (512, 1333), (544, 1333),
+                                    (576, 1333), (608, 1333), (640, 1333),
+                                    (672, 1333), (704, 1333), (736, 1333),
+                                    (768, 1333), (800, 1333)],
+                      'multiscale_mode':
+                      'value',
+                      'override':
+                      True,
+                      'keep_ratio':
+                      True
+                  }]]),
+    dict(
+        type='Normalize',
+        mean=[123.675, 116.28, 103.53],
+        std=[58.395, 57.12, 57.375],
+        to_rgb=True),
+    dict(type='Pad', size_divisor=32),
+    dict(type='DefaultFormatBundle'),
+    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+]
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(
+        type='MultiScaleFlipAug',
+        img_scale=(1333, 800),
+        flip=False,
+        transforms=[
+            dict(type='Resize', keep_ratio=True),
+            dict(type='RandomFlip'),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='Pad', size_divisor=32),
+            dict(type='ImageToTensor', keys=['img']),
+            dict(type='Collect', keys=['img'])
+        ])
+]
+data = dict(
+    samples_per_gpu=6,
+    workers_per_gpu=2,
+    train=dict(
+        type='CocoDataset',
+        ann_file='data/coco/annotations/instances_train2017.json',
+        img_prefix='data/coco/train2017/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
+            dict(type='RandomFlip', flip_ratio=0.5),
+            dict(
+                type='AutoAugment',
+                policies=[[{
+                    'type':
+                    'Resize',
+                    'img_scale': [(480, 1333), (512, 1333), (544, 1333),
+                                  (576, 1333), (608, 1333), (640, 1333),
+                                  (672, 1333), (704, 1333), (736, 1333),
+                                  (768, 1333), (800, 1333)],
+                    'multiscale_mode':
+                    'value',
+                    'keep_ratio':
+                    True
+                }],
+                          [{
+                              'type': 'Resize',
+                              'img_scale': [(400, 1333), (500, 1333),
+                                            (600, 1333)],
+                              'multiscale_mode': 'value',
+                              'keep_ratio': True
+                          }, {
+                              'type': 'RandomCrop',
+                              'crop_type': 'absolute_range',
+                              'crop_size': (384, 600),
+                              'allow_negative_crop': True
+                          }, {
+                              'type':
+                              'Resize',
+                              'img_scale': [(480, 1333), (512, 1333),
+                                            (544, 1333), (576, 1333),
+                                            (608, 1333), (640, 1333),
+                                            (672, 1333), (704, 1333),
+                                            (736, 1333), (768, 1333),
+                                            (800, 1333)],
+                              'multiscale_mode':
+                              'value',
+                              'override':
+                              True,
+                              'keep_ratio':
+                              True
+                          }]]),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='Pad', size_divisor=32),
+            dict(type='DefaultFormatBundle'),
+            dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+        ]),
+    val=dict(
+        type='CocoDataset',
+        ann_file='data/coco/annotations/instances_val2017.json',
+        img_prefix='data/coco/val2017/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug',
+                img_scale=(1333, 800),
+                flip=False,
+                transforms=[
+                    dict(type='Resize', keep_ratio=True),
+                    dict(type='RandomFlip'),
+                    dict(
+                        type='Normalize',
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
+                        to_rgb=True),
+                    dict(type='Pad', size_divisor=32),
+                    dict(type='ImageToTensor', keys=['img']),
+                    dict(type='Collect', keys=['img'])
+                ])
+        ]),
+    test=dict(
+        type='CocoDataset',
+        ann_file='data/coco/annotations/instances_val2017.json',
+        img_prefix='data/coco/val2017/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug',
+                img_scale=(1333, 800),
+                flip=False,
+                transforms=[
+                    dict(type='Resize', keep_ratio=True),
+                    dict(type='RandomFlip'),
+                    dict(
+                        type='Normalize',
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
+                        to_rgb=True),
+                    dict(type='Pad', size_divisor=32),
+                    dict(type='ImageToTensor', keys=['img']),
+                    dict(type='Collect', keys=['img'])
+                ])
+        ]))
+evaluation = dict(interval=1, metric='bbox')
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
+optimizer_config = dict(
+    grad_clip=None,
+    type='DistOptimizerHook',
+    update_interval=1,
+    coalesce=True,
+    bucket_size_mb=-1,
+    use_fp16=False,
+    memory_threshold=13,
+    memory_buffer=5,
+    dc=dict(enable=True, warmup_iters=30))
+lr_config = dict(
+    policy='step',
+    warmup='linear',
+    warmup_iters=500,
+    warmup_ratio=0.001,
+    step=[8, 11])
+runner = dict(type='EpochBasedRunner', max_epochs=1)
+checkpoint_config = dict(interval=1)
+log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
+custom_hooks = [dict(type='NumClassCheckHook')]
+dist_params = dict(backend='nccl')
+log_level = 'INFO'
+load_from = None
+resume_from = None
+workflow = [('train', 1)]
+fp16 = None
+work_dir = './work_dirs/retinanet_r101_fpn_1x_coco_dc13'
+gpu_ids = range(0, 1)
+
+2023-02-19 10:51:38,836 - mmdet - INFO - Set random seed to 42, deterministic: False
+2023-02-19 10:51:39,444 - mmdet - INFO - load model from: torchvision://resnet101
+2023-02-19 10:51:39,444 - mmdet - INFO - load checkpoint from torchvision path: torchvision://resnet101
+Downloading: "https://download.pytorch.org/models/resnet101-63fe2227.pth" to /root/.cache/torch/hub/checkpoints/resnet101-63fe2227.pth
+apex is not installed
+apex is not installed
+apex is not installed
+apex is not installed
+Seed set to 42 and deterministic=False
+  0%|          | 0.00/171M [00:00<?, ?B/s]  0%|          | 752k/171M [00:00<00:25, 6.87MB/s]  1%|          | 1.39M/171M [00:00<00:52, 3.38MB/s]  1%|          | 1.80M/171M [00:00<01:02, 2.84MB/s]  1%|▏         | 2.47M/171M [00:00<00:45, 3.85MB/s]  2%|▏         | 3.52M/171M [00:00<00:30, 5.66MB/s]  3%|▎         | 4.64M/171M [00:00<00:23, 7.27MB/s]  3%|▎         | 5.76M/171M [00:00<00:20, 8.49MB/s]  4%|▍         | 6.88M/171M [00:01<00:18, 9.38MB/s]  5%|▍         | 8.01M/171M [00:01<00:16, 10.1MB/s]  5%|▌         | 9.03M/171M [00:01<00:18, 9.35MB/s]  6%|▌         | 9.98M/171M [00:01<00:17, 9.49MB/s]  7%|▋         | 11.1M/171M [00:01<00:16, 10.1MB/s]  7%|▋         | 12.2M/171M [00:01<00:15, 10.6MB/s]  8%|▊         | 13.3M/171M [00:01<00:15, 10.9MB/s]  8%|▊         | 14.5M/171M [00:01<00:14, 11.1MB/s]  9%|▉         | 15.5M/171M [00:01<00:14, 10.9MB/s] 10%|▉         | 16.6M/171M [00:02<00:14, 10.8MB/s] 10%|█         | 17.7M/171M [00:02<00:14, 11.0MB/s] 11%|█         | 18.8M/171M [00:02<00:14, 11.2MB/s] 12%|█▏        | 20.0M/171M [00:02<00:13, 11.4MB/s] 12%|█▏        | 21.1M/171M [00:02<00:13, 11.5MB/s] 13%|█▎        | 22.2M/171M [00:02<00:13, 11.5MB/s] 14%|█▎        | 23.3M/171M [00:02<00:13, 11.6MB/s] 14%|█▍        | 24.5M/171M [00:02<00:13, 11.6MB/s] 15%|█▌        | 25.6M/171M [00:02<00:13, 11.6MB/s] 16%|█▌        | 26.7M/171M [00:02<00:12, 11.6MB/s] 16%|█▋        | 27.8M/171M [00:03<00:13, 11.3MB/s] 17%|█▋        | 28.9M/171M [00:03<00:13, 11.4MB/s] 18%|█▊        | 30.0M/171M [00:03<00:12, 11.4MB/s] 18%|█▊        | 31.1M/171M [00:03<00:12, 11.5MB/s] 19%|█▉        | 32.2M/171M [00:03<00:12, 11.5MB/s] 20%|█▉        | 33.4M/171M [00:03<00:12, 11.2MB/s] 20%|██        | 34.5M/171M [00:03<00:12, 11.3MB/s] 21%|██        | 35.6M/171M [00:03<00:12, 11.4MB/s] 22%|██▏       | 36.7M/171M [00:03<00:12, 11.5MB/s] 22%|██▏       | 37.8M/171M [00:03<00:12, 11.5MB/s] 23%|██▎       | 38.9M/171M [00:04<00:12, 11.4MB/s] 23%|██▎       | 40.0M/171M [00:04<00:11, 11.5MB/s] 24%|██▍       | 41.1M/171M [00:04<00:11, 11.5MB/s] 25%|██▍       | 42.3M/171M [00:04<00:11, 11.6MB/s] 25%|██▌       | 43.4M/171M [00:04<00:11, 11.6MB/s] 26%|██▌       | 44.5M/171M [00:04<00:11, 11.5MB/s] 27%|██▋       | 45.6M/171M [00:04<00:11, 11.5MB/s] 27%|██▋       | 46.7M/171M [00:04<00:11, 11.5MB/s] 28%|██▊       | 47.8M/171M [00:04<00:11, 11.5MB/s] 29%|██▊       | 48.9M/171M [00:04<00:11, 11.4MB/s] 29%|██▉       | 50.0M/171M [00:05<00:11, 11.3MB/s] 30%|██▉       | 51.1M/171M [00:05<00:11, 11.3MB/s] 31%|███       | 52.2M/171M [00:05<00:10, 11.3MB/s] 31%|███       | 53.3M/171M [00:05<00:10, 11.3MB/s] 32%|███▏      | 54.4M/171M [00:05<00:10, 11.4MB/s] 33%|███▎      | 55.5M/171M [00:05<00:10, 11.4MB/s] 33%|███▎      | 56.6M/171M [00:05<00:10, 11.4MB/s] 34%|███▍      | 57.7M/171M [00:05<00:10, 11.4MB/s] 34%|███▍      | 58.8M/171M [00:05<00:10, 11.4MB/s] 35%|███▌      | 59.9M/171M [00:06<00:10, 11.4MB/s] 36%|███▌      | 61.0M/171M [00:06<00:10, 11.3MB/s] 36%|███▋      | 62.0M/171M [00:06<00:10, 11.3MB/s] 37%|███▋      | 63.2M/171M [00:06<00:09, 11.4MB/s] 38%|███▊      | 64.3M/171M [00:06<00:09, 11.4MB/s] 38%|███▊      | 65.4M/171M [00:06<00:09, 11.4MB/s] 39%|███▉      | 66.4M/171M [00:06<00:09, 11.4MB/s] 40%|███▉      | 67.5M/171M [00:06<00:09, 11.4MB/s] 40%|████      | 68.6M/171M [00:06<00:09, 11.4MB/s] 41%|████      | 69.7M/171M [00:06<00:09, 11.4MB/s] 42%|████▏     | 70.8M/171M [00:07<00:09, 11.4MB/s] 42%|████▏     | 71.9M/171M [00:07<00:09, 11.4MB/s] 43%|████▎     | 73.0M/171M [00:07<00:08, 11.4MB/s] 43%|████▎     | 74.1M/171M [00:07<00:08, 11.4MB/s] 44%|████▍     | 75.2M/171M [00:07<00:08, 11.4MB/s] 45%|████▍     | 76.3M/171M [00:07<00:08, 11.4MB/s] 45%|████▌     | 77.4M/171M [00:07<00:08, 11.4MB/s] 46%|████▌     | 78.5M/171M [00:07<00:08, 11.4MB/s] 47%|████▋     | 79.6M/171M [00:07<00:08, 11.4MB/s] 47%|████▋     | 80.7M/171M [00:07<00:08, 11.4MB/s] 48%|████▊     | 81.8M/171M [00:08<00:08, 11.4MB/s] 49%|████▊     | 82.9M/171M [00:08<00:08, 11.4MB/s] 49%|████▉     | 84.0M/171M [00:08<00:07, 11.4MB/s] 50%|████▉     | 85.1M/171M [00:08<00:07, 11.4MB/s] 51%|█████     | 86.2M/171M [00:08<00:07, 11.4MB/s] 51%|█████     | 87.2M/171M [00:08<00:07, 11.4MB/s] 52%|█████▏    | 88.3M/171M [00:08<00:07, 11.4MB/s] 52%|█████▏    | 89.4M/171M [00:08<00:07, 11.4MB/s] 53%|█████▎    | 90.5M/171M [00:08<00:07, 11.4MB/s] 54%|█████▎    | 91.6M/171M [00:08<00:07, 11.4MB/s] 54%|█████▍    | 92.7M/171M [00:09<00:07, 11.4MB/s] 55%|█████▌    | 93.8M/171M [00:09<00:07, 11.4MB/s] 56%|█████▌    | 94.9M/171M [00:09<00:06, 11.4MB/s] 56%|█████▋    | 96.0M/171M [00:09<00:06, 11.4MB/s] 57%|█████▋    | 97.1M/171M [00:09<00:06, 11.4MB/s] 58%|█████▊    | 98.2M/171M [00:09<00:06, 11.4MB/s] 58%|█████▊    | 99.3M/171M [00:09<00:06, 11.4MB/s] 59%|█████▉    | 100M/171M [00:09<00:06, 11.4MB/s]  60%|█████▉    | 102M/171M [00:09<00:06, 11.4MB/s] 60%|██████    | 103M/171M [00:09<00:06, 11.4MB/s] 61%|██████    | 104M/171M [00:10<00:06, 11.4MB/s] 61%|██████▏   | 105M/171M [00:10<00:06, 11.5MB/s] 62%|██████▏   | 106M/171M [00:10<00:08, 7.93MB/s] 63%|██████▎   | 107M/171M [00:10<00:07, 8.62MB/s] 63%|██████▎   | 108M/171M [00:10<00:07, 9.21MB/s] 64%|██████▍   | 109M/171M [00:10<00:06, 9.70MB/s] 65%|██████▍   | 110M/171M [00:10<00:07, 8.83MB/s] 65%|██████▌   | 111M/171M [00:11<00:08, 6.94MB/s] 66%|██████▌   | 112M/171M [00:11<00:07, 7.93MB/s] 66%|██████▋   | 113M/171M [00:11<00:06, 8.75MB/s] 67%|██████▋   | 114M/171M [00:11<00:06, 9.41MB/s] 68%|██████▊   | 115M/171M [00:11<00:05, 9.90MB/s] 68%|██████▊   | 116M/171M [00:11<00:05, 10.3MB/s] 69%|██████▉   | 118M/171M [00:11<00:05, 10.6MB/s] 70%|██████▉   | 119M/171M [00:11<00:05, 10.8MB/s] 70%|███████   | 120M/171M [00:11<00:04, 11.0MB/s] 71%|███████   | 121M/171M [00:11<00:04, 11.1MB/s] 71%|███████▏  | 122M/171M [00:12<00:04, 11.2MB/s] 72%|███████▏  | 123M/171M [00:12<00:04, 11.3MB/s] 73%|███████▎  | 124M/171M [00:12<00:04, 9.94MB/s] 73%|███████▎  | 125M/171M [00:12<00:04, 10.3MB/s] 74%|███████▍  | 126M/171M [00:12<00:04, 10.6MB/s] 75%|███████▍  | 127M/171M [00:12<00:04, 10.8MB/s] 75%|███████▌  | 128M/171M [00:12<00:04, 11.0MB/s] 76%|███████▌  | 130M/171M [00:12<00:03, 11.1MB/s] 77%|███████▋  | 131M/171M [00:12<00:03, 11.2MB/s] 77%|███████▋  | 132M/171M [00:13<00:03, 11.3MB/s] 78%|███████▊  | 133M/171M [00:13<00:03, 11.3MB/s] 79%|███████▊  | 134M/171M [00:13<00:03, 11.3MB/s] 79%|███████▉  | 135M/171M [00:13<00:03, 11.4MB/s] 80%|███████▉  | 136M/171M [00:13<00:03, 11.4MB/s] 80%|████████  | 137M/171M [00:13<00:03, 11.4MB/s] 81%|████████  | 138M/171M [00:13<00:02, 11.4MB/s] 82%|████████▏ | 139M/171M [00:13<00:02, 11.4MB/s] 82%|████████▏ | 140M/171M [00:13<00:02, 11.4MB/s] 83%|████████▎ | 142M/171M [00:13<00:02, 11.4MB/s] 84%|████████▎ | 143M/171M [00:14<00:02, 11.4MB/s] 84%|████████▍ | 144M/171M [00:14<00:02, 11.4MB/s] 85%|████████▍ | 145M/171M [00:14<00:02, 11.4MB/s] 86%|████████▌ | 146M/171M [00:14<00:02, 11.4MB/s] 86%|████████▋ | 147M/171M [00:14<00:02, 11.4MB/s] 87%|████████▋ | 148M/171M [00:14<00:02, 11.4MB/s] 88%|████████▊ | 149M/171M [00:14<00:01, 11.4MB/s] 88%|████████▊ | 150M/171M [00:14<00:01, 11.4MB/s] 89%|████████▉ | 151M/171M [00:14<00:01, 11.4MB/s] 89%|████████▉ | 153M/171M [00:14<00:01, 11.4MB/s] 90%|█████████ | 154M/171M [00:15<00:01, 11.4MB/s] 91%|█████████ | 155M/171M [00:15<00:01, 11.4MB/s] 91%|█████████▏| 156M/171M [00:15<00:01, 11.4MB/s] 92%|█████████▏| 157M/171M [00:15<00:01, 11.4MB/s] 93%|█████████▎| 158M/171M [00:15<00:01, 11.4MB/s] 93%|█████████▎| 159M/171M [00:15<00:01, 11.4MB/s] 94%|█████████▍| 160M/171M [00:15<00:00, 11.5MB/s] 95%|█████████▍| 161M/171M [00:15<00:00, 9.73MB/s] 95%|█████████▌| 162M/171M [00:15<00:00, 10.2MB/s] 96%|█████████▌| 164M/171M [00:15<00:00, 10.5MB/s] 97%|█████████▋| 165M/171M [00:16<00:00, 10.8MB/s] 97%|█████████▋| 166M/171M [00:16<00:00, 11.0MB/s] 98%|█████████▊| 167M/171M [00:16<00:00, 11.1MB/s] 98%|█████████▊| 168M/171M [00:16<00:00, 11.2MB/s] 99%|█████████▉| 169M/171M [00:16<00:00, 11.2MB/s]100%|█████████▉| 170M/171M [00:16<00:00, 11.4MB/s]100%|██████████| 171M/171M [00:16<00:00, 10.8MB/s]
+2023-02-19 10:51:56,930 - mmdet - WARNING - The model and loaded state dict do not match exactly
+
+unexpected key in source state_dict: fc.weight, fc.bias
+
+2023-02-19 10:52:29,030 - mmdet - INFO - Start running, host: root@53f4750e67dd, work_dir: /workspace/mimose-mmdet/work_dirs/retinanet_r101_fpn_1x_coco_dc13
+2023-02-19 10:52:29,031 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(ABOVE_NORMAL) DistOptimizerHook                  
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(ABOVE_NORMAL) DistOptimizerHook                  
+(NORMAL      ) EvalHook                           
+(NORMAL      ) NumClassCheckHook                  
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(ABOVE_NORMAL) DistOptimizerHook                  
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) DistOptimizerHook                  
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) EvalHook                           
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_train_epoch:
+(ABOVE_NORMAL) DistOptimizerHook                  
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) NumClassCheckHook                  
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+2023-02-19 10:52:29,031 - mmdet - INFO - workflow: [('train', 1)], max: 1 epochs
+2023-02-19 10:52:29,032 - mmdet - INFO - Checkpoints will be saved to /workspace/mimose-mmdet/work_dirs/retinanet_r101_fpn_1x_coco_dc13 by HardDiskBackend.
+loading annotations into memory...
+Done (t=18.86s)
+creating index...
+index created!
+Memory threshold: 13 GiB
+dc manager max memory GB: 8
+loading annotations into memory...
+Done (t=0.93s)
+creating index...
+index created!
+ERROR: Unexpected bus error encountered in worker. This might be caused by insufficient shared memory (shm).
+ ERROR: Unexpected bus error encountered in worker. This might be caused by insufficient shared memory (shm).
+ Traceback (most recent call last):
+  File "/opt/conda/envs/mimose/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 1011, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/opt/conda/envs/mimose/lib/python3.9/multiprocessing/queues.py", line 113, in get
+    if not self._poll(timeout):
+  File "/opt/conda/envs/mimose/lib/python3.9/multiprocessing/connection.py", line 257, in poll
+    return self._poll(timeout)
+  File "/opt/conda/envs/mimose/lib/python3.9/multiprocessing/connection.py", line 424, in _poll
+    r = wait([self], timeout)
+  File "/opt/conda/envs/mimose/lib/python3.9/multiprocessing/connection.py", line 931, in wait
+    ready = selector.select(timeout)
+  File "/opt/conda/envs/mimose/lib/python3.9/selectors.py", line 416, in select
+    fd_event_list = self._selector.poll(timeout)
+  File "/opt/conda/envs/mimose/lib/python3.9/site-packages/torch/utils/data/_utils/signal_handling.py", line 66, in handler
+    _error_if_any_worker_fails()
+RuntimeError: DataLoader worker (pid 25825) is killed by signal: Bus error. It is possible that dataloader's workers are out of shared memory. Please try to raise your shared memory limit.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/mimose-mmdet/tools/train.py", line 192, in <module>
+    main()
+  File "/workspace/mimose-mmdet/tools/train.py", line 181, in main
+    train_detector(
+  File "/workspace/mimose-mmdet/mmdet/apis/train.py", line 191, in train_detector
+    runner.run(data_loaders, cfg.workflow)
+  File "/opt/conda/envs/mimose/lib/python3.9/site-packages/mmcv/runner/epoch_based_runner.py", line 136, in run
+    epoch_runner(data_loaders[i], **kwargs)
+  File "/opt/conda/envs/mimose/lib/python3.9/site-packages/mmcv/runner/epoch_based_runner.py", line 49, in train
+    for i, data_batch in enumerate(self.data_loader):
+  File "/opt/conda/envs/mimose/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 530, in __next__
+    data = self._next_data()
+  File "/opt/conda/envs/mimose/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 1207, in _next_data
+    idx, data = self._get_data()
+  File "/opt/conda/envs/mimose/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 1173, in _get_data
+    success, data = self._try_get_data()
+  File "/opt/conda/envs/mimose/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 1024, in _try_get_data
+    raise RuntimeError('DataLoader worker (pid(s) {}) exited unexpectedly'.format(pids_str)) from e
+RuntimeError: DataLoader worker (pid(s) 25825) exited unexpectedly

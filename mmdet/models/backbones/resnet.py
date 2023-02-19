@@ -445,10 +445,20 @@ class ResNet(nn.Module):
             self.add_module(layer_name, res_layer)
             self.res_layers.append(layer_name)
 
-        self._freeze_stages()
+        # self._freeze_stages()
 
         self.feat_dim = self.block.expansion * base_channels * 2**(
             len(self.stage_blocks) - 1)
+
+    @property
+    def gc_layers(self):
+        modules_list = []
+        for i, layer_name in enumerate(self.res_layers):
+            res_layer: ResLayer = getattr(self, layer_name)
+            blocks = list(res_layer)
+            modules_list += blocks
+
+        return modules_list[1:-1]
 
     def make_stage_plugins(self, plugins, stage_idx):
         """Make plugins for ResNet ``stage_idx`` th stage.
@@ -640,7 +650,7 @@ class ResNet(nn.Module):
         """Convert the model into training mode while keep normalization layer
         freezed."""
         super(ResNet, self).train(mode)
-        self._freeze_stages()
+        # self._freeze_stages()
         if mode and self.norm_eval:
             for m in self.modules():
                 # trick: eval have effect on BatchNorm only

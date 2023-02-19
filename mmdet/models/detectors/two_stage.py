@@ -79,6 +79,10 @@ class TwoStageDetector(BaseDetector):
 
     def extract_feat(self, img):
         """Directly extract features from the backbone+neck."""
+        # TODO: forward
+        # 收集image size、epoch
+        self.test_memory_usage = torch.cuda.memory_allocated()
+        print(img.shape)
         x = self.backbone(img)
         if self.with_neck:
             x = self.neck(x)
@@ -140,7 +144,9 @@ class TwoStageDetector(BaseDetector):
             dict[str, Tensor]: a dictionary of loss components
         """
         x = self.extract_feat(img)
-
+        # import pdb; pdb.set_trace()
+        # x = tuple([tmp.decheckpoint() for tmp in x])
+# TODO: forward
         losses = dict()
 
         # RPN forward and loss

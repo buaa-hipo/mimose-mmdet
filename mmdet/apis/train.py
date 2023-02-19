@@ -20,7 +20,7 @@ except:
     print('apex is not installed')
 
 
-def set_random_seed(seed, deterministic=False):
+def set_random_seed(seed, deterministic=True):
     """Set random seed.
 
     Args:
@@ -30,6 +30,7 @@ def set_random_seed(seed, deterministic=False):
             to True and `torch.backends.cudnn.benchmark` to False.
             Default: False.
     """
+    print(f"Seed set to {seed} and deterministic={deterministic}")
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -100,6 +101,11 @@ def train_detector(model,
     else:
         model = MMDataParallel(
             model.cuda(cfg.gpu_ids[0]), device_ids=cfg.gpu_ids)
+    # import pdb; pdb.set_trace()
+    # model.module.backbone._apply(lambda v: v.detach().try_checkpoint())
+    # model.module .neck._apply(lambda v: v.detach().try_checkpoint())
+    # build optimizer
+    optimizer = build_optimizer(model, cfg.optimizer)
 
     if 'runner' not in cfg:
         cfg.runner = {

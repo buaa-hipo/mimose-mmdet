@@ -554,6 +554,15 @@ class SwinTransformer(nn.Module):
 
         self._freeze_stages()
 
+    @property
+    def gc_layers(self):
+        modules_list = []
+        for layer in self.layers:
+            for block in layer.blocks:
+                modules_list.append(block)
+        return modules_list
+        
+
     def _freeze_stages(self):
         if self.frozen_stages >= 0:
             self.patch_embed.eval()

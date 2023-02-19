@@ -1,0 +1,21 @@
+_base_ = './retinanet_r50_fpn_1x_coco.py'
+# model = dict(pretrained='torchvision://resnet50', backbone=dict(depth=50))
+
+# do not use mmdet version fp16
+fp16 = None
+optimizer_config = dict(
+    type="DistOptimizerHook",
+    update_interval=1,
+    grad_clip=None,
+    coalesce=True,
+    bucket_size_mb=-1,
+    use_fp16=False,
+    memory_threshold=16,
+    memory_buffer=10,
+    dc=dict(
+        enable=True,
+        static=True,
+        warmup_iters=30,
+        max_input=800*1333,
+    )
+)

@@ -1,9 +1,67 @@
 import torch
 import torch.nn as nn
+from torch.autograd import Function
 
 from mmdet.core import bbox2result
 from ..builder import DETECTORS, build_backbone, build_head, build_neck
 from .base import BaseDetector
+
+class CheckpointFunction(Function):
+    @staticmethod
+    def forward(ctx, x):
+        assert not x.is_checkpoint(),"x must not a checkpoint tensor"
+        return x.detach().checkpoint()
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        return grad_output.decheckpoint()
+
+class Checkpoint(nn.Module):
+    def __init__(self):
+        super().__init__()
+    
+    def forward(self,x):
+        return CheckpointFunction.apply(x)
+
+class DecheckpointFunction(Function):
+    @staticmethod
+    def forward(ctx, x):
+        assert x.is_checkpoint(),"x must be a checkpoint tensor"
+        return x.decheckpoint()
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        return grad_output.checkpoint()
+
+class Decheckpoint(nn.Module):
+    def __init__(self):
+        super().__init__()
+    
+    def forward(self,x):
+        return DecheckpointFunction.apply(x)
+
+class Wrapper(nn.Module):
+    def __init__(self, op):
+        super().__init__()
+        a = 5 + 4 + 4
+        b = 10
+        self.decheckpoint = [Decheckpoint() for _ in range(a)]
+        self.op = op
+        self.checkpoint = [Checkpoint() for _ in range(b)]
+        
+    
+    def forward(self, x, img_metas, gt_bboxes, gt_labels, gt_bboxes_ignore):
+        origin_x = tuple([self.decheckpoint[i](x[i]) for i in range(5)])
+        # origin_gt_bboxes = [self.decheckpoint[i + 5](gt_bboxes[i]) for i in range(4)]
+        # origin_gt_labels = [self.decheckpoint[i + 9](gt_labels[i]) for i in range(4)]
+        origin_gt_bboxes = gt_bboxes
+        origin_gt_labels = gt_labels
+        origin_output = self.op(origin_x, img_metas, origin_gt_bboxes, origin_gt_labels, gt_bboxes_ignore)
+        checkpoint_output = {
+            'loss_cls': [self.checkpoint[i](origin_output['loss_cls'][i]) for i in range(5)],
+            'loss_bbox': [self.checkpoint[i + 5](origin_output['loss_bbox'][i]) for i in range(5)],
+        }
+        return checkpoint_output
 
 
 @DETECTORS.register_module()
@@ -31,6 +89,7 @@ class SingleStageDetector(BaseDetector):
         self.train_cfg = train_cfg
         self.test_cfg = test_cfg
         self.init_weights(pretrained=pretrained)
+        # self.wrap = Wrapper(self.bbox_head.forward_train)
 
     def init_weights(self, pretrained=None):
         """Initialize the weights in detector.
@@ -51,6 +110,10 @@ class SingleStageDetector(BaseDetector):
 
     def extract_feat(self, img):
         """Directly extract features from the backbone+neck."""
+        self.test_memory_usage = torch.cuda.memory_allocated()
+        self.input_shape = img.shape
+        if hasattr(self, 'dc_manager') and self.dc_manager:
+            self.dc_manager.set_input_size(img.shape[-1] * img.shape[-2])
         x = self.backbone(img)
         if self.with_neck:
             x = self.neck(x)
@@ -91,8 +154,11 @@ class SingleStageDetector(BaseDetector):
         """
         super(SingleStageDetector, self).forward_train(img, img_metas)
         x = self.extract_feat(img)
+        assert len(x) == 5
+        # x = tuple([tmp.decheckpoint() for tmp in x])
         losses = self.bbox_head.forward_train(x, img_metas, gt_bboxes,
                                               gt_labels, gt_bboxes_ignore)
+        # losses = self.wrap(x, img_metas, gt_bboxes, gt_labels, gt_bboxes_ignore)
         return losses
 
     def simple_test(self, img, img_metas, rescale=False):

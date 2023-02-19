@@ -40,7 +40,7 @@ def parse_args():
         nargs='+',
         help='ids of gpus to use '
         '(only applicable to non-distributed training)')
-    parser.add_argument('--seed', type=int, default=None, help='random seed')
+    parser.add_argument('--seed', type=int, default=42, help='random seed')
     parser.add_argument(
         '--deterministic',
         action='store_true',
@@ -159,6 +159,11 @@ def main():
         cfg.model,
         train_cfg=cfg.get('train_cfg'),
         test_cfg=cfg.get('test_cfg'))
+    # torch.set_memory_budget(int(10 * (1024 ** 3)))
+    # model.backbone._apply(lambda v: v.detach().try_checkpoint())
+    # model.neck._apply(lambda v: v.detach().try_checkpoint())
+    # torch.toggle_ignore_small_tensors(True)
+    # torch.toggle_sampling(True)
 
     datasets = [build_dataset(cfg.data.train)]
     if len(cfg.workflow) == 2:
